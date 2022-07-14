@@ -1,10 +1,24 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div>
+    <nav class="navbar navbar-dark bg-dark justify-content-between flex-nowrap flex-row">
+      <div class="container">
+        <a class="navbar-brand float-left">SHEIN REGISTER</a>
+        <ul class="nav navbar-nav nav-fill w-100">
+          <li class="nav-item">
+            <router-link class="nav-link pr-3" to="/">Añadir Clientes</router-link>
+          </li>
+          <li class="nav-item ">
+            <router-link class="nav-link" to="/list">Ver Clientes</router-link>
+          </li>
+           <li class="nav-item ">
+            <router-link class="nav-link" to="/createOrder">Añadir Pedido</router-link>
+          </li>
+        </ul>
+      </div>
     </nav>
-    <router-view/>
+    <div class="container mt-5">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
