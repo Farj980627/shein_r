@@ -1,46 +1,35 @@
 <template>
-  <div>
-    <nav class="navbar navbar-dark bg-dark justify-content-between flex-nowrap flex-row">
-      <div class="container">
-        <a class="navbar-brand float-left">SHEIN REGISTER</a>
-        <ul class="nav navbar-nav nav-fill w-100">
-          <li class="nav-item">
-            <router-link class="nav-link pr-3" to="/">Añadir Clientes</router-link>
-          </li>
-          <li class="nav-item ">
-            <router-link class="nav-link" to="/list">Ver Clientes</router-link>
-          </li>
-           <li class="nav-item ">
-            <router-link class="nav-link" to="/createOrder">Añadir Pedido</router-link>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <div class="container mt-5">
+  <div id="app" data-app>
       <router-view></router-view>
-    </div>
   </div>
 </template>
 
-<style>
+<script>
+
+
+</script>
+
+<style scoped>
+
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  margin-top: auto;
+  background: rgb(179, 41, 116);
+  background: linear-gradient(
+    90deg,
+    rgba(179, 41, 116, 1) 0%,
+    rgba(209, 143, 169, 1) 35%,
+    rgba(223, 227, 218, 1) 100%
+  );
 }
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
+

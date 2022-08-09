@@ -12,7 +12,7 @@
             <th>Nombres</th>
             <th>A. Paterno</th>
             <th>A. Materno</th>
-            <th>Núm. Cliente</th>
+            <th>Turno</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -21,10 +21,10 @@
             <td>{{ user.names }}</td>
             <td>{{ user.apaterno }}</td>
             <td>{{ user.amaterno }}</td>
-            <td>{{ user.clientNumber }}</td>
+            <td>{{ user.turn }}</td>
             <td>
               <router-link
-                :to="{ name: 'Edit', params: { id: user.key } }"
+                :to="{ name: 'EditDeliveryman', params: { id: user.key } }"
                 class="btn btn-primary"
                 >Edit
               </router-link>
@@ -45,10 +45,10 @@
 <script>
 import { db } from "../firebaseDb";
 import navbar from "@/components/navigation"
-
 export default {
     components: {navbar},
   data() {
+    
     return {
       Users: [],
     };
@@ -60,16 +60,15 @@ export default {
         console.log(err);
       });
     }
-    db.collection("clients").onSnapshot((snapshotChange) => {
+    db.collection("deliverymans").onSnapshot((snapshotChange) => {
       this.Users = [];
       snapshotChange.forEach((doc) => {
-        console.log("data firebase", doc.data());
         this.Users.push({
           key: doc.id,
           names: doc.data().names,
           apaterno: doc.data().apaterno,
           amaterno: doc.data().amaterno,
-          clientNumber: doc.data().clientNumber,
+          turn: doc.data().turn,
         });
       });
     });
@@ -81,11 +80,11 @@ export default {
           "Seguro que deseas elimar este usuario?? No podras recuperar sus datos"
         )
       ) {
-        db.collection("clients")
+        db.collection("deliverymans")
           .doc(id)
           .delete()
           .then(() => {
-            alert("Cliente Eliminado");
+            alert("Repartidor Eliminado");
           })
           .catch((error) => {
             console.error(error);

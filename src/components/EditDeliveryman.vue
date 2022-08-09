@@ -35,61 +35,27 @@
             required
           />
         </div>
-        <div class="form-group">
-          <label>Número de Cliente:</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="user.clientNumber"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label>Calle:</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="user.street"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label>Número:</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="user.number"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label>Col. o Fracc.:</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="user.colofracc"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label>Direcciones Alternativas:</label>
-          <input type="text" class="form-control" v-model="user.otherAddress" />
-        </div>
-
-        <div class="form-group">
-          <label>Teléfono:</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="user.phone"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label>Telefonos Alternativos:</label>
-          <input type="text" class="form-control" v-model="user.otherPhones" />
-        </div>
+        <br />
+        <v-select
+          background-color="rgba(202,210,208,0.8)"
+          color="black"
+          v-model="user.turn"
+          outlined
+          placeholder="Turno:"
+          :items="turns"
+        >
+          <template v-slot:selection="{ item }">
+            <span
+              style="
+                font-size: 2rem;
+                color: rgb(0, 0, 0);
+                text-align: center;
+                width: 100%;
+              "
+              >{{ item }}</span
+            >
+          </template>
+        </v-select>
         <br />
         <div class="form-group">
           <button class="btn btn-primary btn-block">Actualizar</button>
@@ -101,12 +67,13 @@
 </template>
 <script>
 import { db } from "../firebaseDb";
-import navbar from "@/components/navigation.vue"
+import navbar from "@/components/navigation"
 export default {
-    components: {navbar},
+  components: {navbar},
   data() {
     return {
       user: {},
+      turns: ["Mañana", "Tarde"],
     };
   },
   created() {
@@ -116,11 +83,14 @@ export default {
         console.log(err);
       });
     }
-    let dbRef = db.collection("clients").doc(this.$route.params.id);
+    let dbRef = db.collection("deliverymans").doc(this.$route.params.id);
     dbRef
       .get()
       .then((doc) => {
         this.user = doc.data();
+        doc.data().turn == "Mañana"
+          ? (this.user.turn = "Mañana")
+          : (this.user.turn = "Tarde");
       })
       .catch((error) => {
         console.log(error);
@@ -129,7 +99,7 @@ export default {
   methods: {
     onUpdateForm(event) {
       event.preventDefault();
-      db.collection("clients")
+      db.collection("deliverymans")
         .doc(this.$route.params.id)
         .update(this.user)
         .then(() => {

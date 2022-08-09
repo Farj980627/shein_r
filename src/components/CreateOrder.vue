@@ -1,130 +1,345 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <h3 class="text-center">Añadir Pedido</h3>
-            <form @submit.prevent="onFormSubmit">
-                <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Numero de cliente: </label>
-                </div>
-                <select class="custom-select" id="inputGroupSelect01" @change="onChangeClientNumber(option.value)">
-                    <option selected>Elegir...</option>
-                    <option 
-                    v-for="client in clientsData"
-                    :key="client.key" 
-                    :value="client.clientNumber"                                       
-                    >{{client.clientNumber}}</option>
-                </select>
-                </div>
-            
-                <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect01">Cliente: </label>
-                </div>
-                <select class="custom-select" id="inputGroupSelect01">
-                    <option selected>Elegir...</option>
-                    <option 
-                    v-for="client in clientsData"
-                    :key="client.key"                    
-                    >{{client.fullname}}</option>
-                </select>
-                </div>              
-                
-                <div class="form-group">
-                    <label>Calle:</label>
-                    <input type="text" class="form-control" v-model="user.street" required>
-                </div>
-                <div class="form-group">
-                    <label>Número:</label>
-                    <input type="text" class="form-control" v-model="user.number" required>
-                </div>
-                <div class="form-group">
-                    <label>Col. o Fracc.:</label>
-                    <input type="text" class="form-control" v-model="user.colofracc" required>
-                </div>
-                <div class="form-group">
-                    <label>Direcciones Alternativas:</label>
-                    <input type="text" class="form-control" v-model="user.otherAddress">
-                </div>
-                
-                <div class="form-group">
-                    <label>Teléfono:</label>
-                    <input type="text" class="form-control" v-model="user.phone" required>
-                </div>
+<app>
+  <navbar />
+  <br/>
+    <br/>
+    <br/>
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <h3 class="text-center">Añadir Pedido</h3>
 
-                <div class="form-group">
-                    <label>Telefonos Alternativos:</label>
-                    <input type="text" class="form-control" v-model="user.otherPhones">
-                </div>
-                <br/>
-                <div class="form-group">
-                    <button class="btn btn-primary btn-block">Añadir Cliente</button>
-                </div>
-            </form>
-        </div>
+      <p class="form-subtitle"><b>Elige el número de cliente</b></p>
+      <v-select
+        background-color="rgba(202,210,208,0.8)"
+        color="black"
+        @change="onChangeClientNumber(clientNum)"
+        v-model="clientNum"
+        outlined
+        placeholder="Selecciona el Núm del cliente"
+        :items="clientNumberArray"
+      >
+        <template v-slot:selection="{ item }">
+          <span
+            style="
+              font-size: 2rem;
+              color: rgb(0, 0, 0);
+              text-align: center;
+              width: 100%;
+            "
+            >{{ item }}</span
+          >
+        </template>
+      </v-select>
+
+      <!-- nombres cliente-->
+      <p class="form-subtitle"><b>Nombre del Cliente</b></p>
+      <v-text-field
+        required
+        v-model="clientFullName"
+        type="text-center"
+        clearable
+        :readonly="true"
+      />
+
+      <!-- telefono cliente-->
+      <p class="form-subtitle"><b>Telefono del Cliente</b></p>
+      <v-text-field
+        required
+        v-model="clientPhone"
+        type="text-center"
+        clearable
+        :readonly="true"
+      />
+
+      <!-- direccion cliente-->
+      <p class="form-subtitle"><b>Dirección del Cliente</b></p>
+      <v-text-field
+        required
+        v-model="clientAddress"
+        type="text-center"
+        clearable
+        :readonly="true"
+      />
+      <br />
+      <h3 class="text-center">Información del Producto</h3>
+
+      <!-- modal para agregar prod-->
+      <p class="form-subtitle"><b>Número de Pedido:</b></p>
+      <v-text-field
+        required
+        v-model="orderNumber"
+        type="text-center"
+        clearable
+      />
+
+      <v-dialog v-model="dialog" persistent max-width="600px">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="primary" dark v-bind="attrs" v-on="on">
+            Capturar Producto
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title>
+            <span class="text-h5"
+              >A continuación teclea la información de tu producto</span
+            >
+          </v-card-title>
+          <p class="form-subtitle"><b>Producto: </b></p>
+          <v-text-field
+            required
+            v-model="productText"
+            type="text-center"
+            clearable
+          />
+
+          <p class="form-subtitle"><b>SKU: </b></p>
+          <v-text-field
+            required
+            v-model="skuText"
+            type="text-center"
+            clearable
+          />
+
+          <p class="form-subtitle"><b>Descripción: </b></p>
+          <v-text-field
+            required
+            v-model="descText"
+            type="text-center"
+            clearable
+          />
+          <p class="form-subtitle"><b>Precio Unitario: </b></p>
+          <v-text-field
+            required
+            v-model="priceText"
+            type="text-center"
+            clearable
+          />
+          <p class="form-subtitle"><b>Piezas: </b></p>
+          <v-text-field
+            required
+            v-model="pzText"
+            type="text-center"
+            clearable
+          />
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="cancelProducts">
+              Cancelar
+            </v-btn>
+            <v-btn color="blue darken-1" text @click="addProducts">
+              Guardar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Productos.....Tabla -->
+      <v-data-table
+        :headers="headers"
+        :items="productsArray"
+        class="elevation-1"
+      ></v-data-table>
+
+      <!-- radio buttos envio-->
+      <v-select
+        v-model="sendType"
+        outlined
+        @change="changeEnvio()"
+        placeholder="Tipo de Envío"
+        :items="tipoEnvioArray"
+      >
+        <template v-slot:selection="{ item }">
+          <span
+            style="
+              font-size: 2rem;
+              color: rgb(0, 0, 0);
+              text-align: center;
+              width: 100%;
+            "
+            >{{ item }}</span
+          >
+        </template>
+      </v-select>
+
+      <!--total del pedido-->
+      <p class="form-subtitle">
+        <b>Total: ${{ orderTotal }}</b>
+      </p>
+
+      <!-- boton guardar pedido-->
+      <v-btn color="primary" dark @click="createOrder()">
+        Guardar Producto
+      </v-btn>
+
+      <br />
     </div>
+  </div>
+</app>
 </template>
 <script>
-    import { db } from '../firebaseDb';
-    export default {
-        data() {
-            return {
-                user: {
-                },
-                clientsData: [],
-                clientNames: ""
-            }
+import moment from "moment";
+import { db } from "../firebaseDb";
+import navbar from "@/components/navigation"
+export default {
+  components: {navbar},
+  data() {
+    return {
+      user: {},
+      clientsData: [],
+      headers: [
+        {
+          text: "Producto:",
+          align: "left",
+          sortable: false,
+          value: "producto",
         },
-        methods: {
-            onFormSubmit(event) {
-                event.preventDefault()
-                db.collection('clients').add(this.user).then(() => {
-                    alert("Cliente Añadido Correctamente");
-                    this.user.names = ''
-                    this.user.apaterno = ''
-                    this.user.amaterno = ''
-                    this.user.clientNumber = ''
-                    this.user.street = ''
-                    this.user.number = ''
-                    this.user.colofracc = ''
-                    this.user.otherAddress = ''
-                    this.user.phone = ''
-                    this.user.otherPhones = ''
-                }).catch((error) => {
-                    alert("Error Al Añadir Cliente");
-                });
-            },
-            onChangeClientNumber(numClient){
-                console.log("entre al onchange?")
-                db
-                .collection("clients")
-                .where("clientNumber", "==", numClient)
-                .get()
-                .then(async (Item) => {
-                    console.log("el item", Item)
-                    this.clientsName = Item
-                });
-                
-            }
-        },
-        
-        created: async function() {
-            await db.collection('clients').onSnapshot((snapshotChange) => {
-                this.clientsData = [];
-                snapshotChange.forEach((doc) => {                    
-                    let clientFullName = doc.data().names + " " + doc.data().apaterno + " " + doc.data().amaterno
-                    this.clientsData.push({
-                        key: doc.id,
-                        names: doc.data().names,
-                        apaterno: doc.data().apaterno,
-                        amaterno: doc.data().amaterno,
-                        fullname: clientFullName,
-                        clientNumber: doc.data().clientNumber
-                    })
-                });            
-            })
-            
-            
-        },
+        { text: "SKU", value: "sku" },
+        { text: "Descripción", value: "descripcion" },
+        { text: "Precio Unitario", value: "precio" },
+        { text: "piezas", value: "piezas" },
+      ],
+      clientNumberArray: [],
+      clientFullName: "",
+      clientPhone: "",
+      clientAddress: "",
+      clientNum: "",
+      productsArray: [],
+      productText: "",
+      skuText: "",
+      descText: "",
+      priceText: "",
+      pzText: "",
+      dialog: false,
+      orderNumber: "",
+      tipoEnvioArray: ["Envío Express", "Envio Estándar"],
+      sendType: "",
+      orderTotal: 0,
+      clientKey: "",
+    };
+  },
+  methods: {
+    onChangeClientNumber(numClient) {
+      console.log("entre al onchange?");
+      db.collection("clients")
+        .where("clientNumber", "==", numClient)
+        .get()
+        .then(async (Item) => {
+          Item.forEach((doc) => {
+            this.clientKey = doc.id;
+            this.clientFullName =
+              doc.data().names +
+              " " +
+              doc.data().apaterno +
+              " " +
+              doc.data().amaterno;
+            this.clientPhone = doc.data().phone;
+            this.clientAddress =
+              "Calle: " +
+              doc.data().street +
+              " " +
+              doc.data().number +
+              ", " +
+              "Colonia o Fraccionamiento: " +
+              doc.data().colofracc;
+          });
+        });
+    },
+    addProducts() {
+      this.productsArray.push({
+        producto: this.productText,
+        sku: this.skuText,
+        descripcion: this.descText,
+        precio: this.priceText,
+        piezas: this.pzText,
+      });
+      this.orderTotalMethod(this.priceText, this.pzText);
+      this.sendType !== "" ? this.changeEnvio() : (this.sendType = "");
+      this.productText = "";
+      this.skuText = "";
+      this.descText = "";
+      this.priceText = "";
+      this.pzText = "";
+
+      this.dialog = false;
+    },
+    cancelProducts() {
+      this.productText = "";
+      this.skuText = "";
+      this.descText = "";
+      this.priceText = "";
+      this.pzText = "";
+
+      this.dialog = false;
+    },
+    orderTotalMethod(price, pzs) {
+      let prdtotal = price * pzs;
+      this.orderTotal += prdtotal;
+    },
+    changeEnvio() {
+      let ordertotaloriginal = 0;
+      let prdtotal;
+      let allprd = this.productsArray.length;
+      let allprdexpress = allprd * 15;
+      this.productsArray.forEach((prd) => {
+        prdtotal = prd.precio * prd.piezas;
+        ordertotaloriginal += prdtotal;
+      });
+      this.sendType == "Envío Express"
+        ? (this.orderTotal = ordertotaloriginal + allprdexpress)
+        : (this.orderTotal = ordertotaloriginal);
+    },
+    createOrder() {
+      moment.locale();
+      const dataOrder = {
+        clientNumber: this.clientNum,
+        clientKey: this.clientKey,
+        orderNumber: this.orderNumber,
+        products: this.productsArray,
+        sendingType: this.sendType,
+        orderTotal: this.orderTotal,
+        enabled: true,
+        created: moment().format("YYYY-MM-DD"),
+        deliveryAssigned: false,
+      };
+      db.collection("orders")
+        .add(dataOrder)
+        .then(() => {
+          alert("Pedido Agregado Correctamente!!");
+          window.location.reload(true);
+        })
+        .catch((error) => {
+          alert("Error Al Añadir Cliente");
+        });
+    },
+  },
+
+  created: async function () {
+    if (sessionStorage.getItem("loged") == "false" || sessionStorage.getItem("loged") == null ) {
+      alert('Inicia sesión para continuar')
+      this.$router.push("/login").catch((err) => {
+        console.log(err);
+      });
     }
+    await db.collection("clients").onSnapshot((snapshotChange) => {
+      this.clientsData = [];
+      snapshotChange.forEach((doc) => {
+        let clientFullName =
+          doc.data().names +
+          " " +
+          doc.data().apaterno +
+          " " +
+          doc.data().amaterno;
+        this.clientsData.push({
+          key: doc.id,
+          names: doc.data().names,
+          apaterno: doc.data().apaterno,
+          amaterno: doc.data().amaterno,
+          fullname: clientFullName,
+          clientNumber: doc.data().clientNumber,
+        });
+        this.clientNumberArray.push(doc.data().clientNumber);
+      });
+    });
+  },
+};
 </script>
